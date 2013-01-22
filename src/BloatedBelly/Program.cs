@@ -50,7 +50,7 @@ namespace BloatedBelly
 
 		static void DropHere()
 		{
-			var dir = Path.Combine(Directory.GetCurrentDirectory(), "\\Belly");
+			var dir = Path.Combine(Directory.GetCurrentDirectory(), ".\\Belly");
 			if (Directory.Exists(dir)) Directory.Delete(dir);
 			Directory.CreateDirectory(dir);
 
@@ -58,9 +58,11 @@ namespace BloatedBelly
 			var resourceNames = assm.GetManifestResourceNames().Where(name => name.StartsWith(CarriedResourcePrefix));
 			foreach (var name in resourceNames)
 			{
-				var newName = name.Replace(CarriedResourcePrefix, "");
+				var newName = Path.Combine(dir, name.Replace(CarriedResourcePrefix, ""));
 
-				using (Stream input = assm.GetManifestResourceStream(name))
+				Console.WriteLine("would try writing "+newName);
+
+				using (var input = assm.GetManifestResourceStream(name))
 				using (Stream output = File.Create(newName))
 				{
 					CopyStream(input, output);
@@ -80,9 +82,10 @@ namespace BloatedBelly
 			foreach (var pattern in patterns)
 			{
 				var files = Directory.GetFiles(dir, pattern, SearchOption.TopDirectoryOnly);
+				
 				foreach (var file in files)
 				{
-					yield return file;
+					yield return Path.GetFileName(file);
 				}
 			}
 		}
@@ -119,7 +122,6 @@ arguments:
 			def.MainModule.Resources.Clear();
 			def.Write(Path.GetFullPath(newFileName));
 		}
-
 
 		static void WriteExecutableWithBinaries(string newFileName, IEnumerable<string> paths)
 		{
