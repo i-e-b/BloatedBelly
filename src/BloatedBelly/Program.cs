@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -46,6 +47,18 @@ namespace BloatedBelly
 
 		static void RunShellCommand(string command)
 		{
+			var dir = Path.Combine(Directory.GetCurrentDirectory(), ".\\Belly");
+			var process = new Process();
+			var startInfo = new ProcessStartInfo
+			{
+				WindowStyle = ProcessWindowStyle.Hidden,
+				FileName = "cmd.exe",
+				Arguments = "/C " + command,
+				WorkingDirectory = dir,
+				UseShellExecute = true
+			};
+			process.StartInfo = startInfo;
+			process.Start();
 		}
 
 		static void DropHere()
@@ -60,7 +73,7 @@ namespace BloatedBelly
 			{
 				var newName = Path.Combine(dir, name.Replace(CarriedResourcePrefix, ""));
 
-				Console.WriteLine("would try writing "+newName);
+				Console.WriteLine(newName);
 
 				using (var input = assm.GetManifestResourceStream(name))
 				using (Stream output = File.Create(newName))
