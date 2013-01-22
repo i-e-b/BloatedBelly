@@ -42,16 +42,6 @@ namespace BloatedBelly
 					ShowInfo();
 					break;
 			}
-
-			Console.WriteLine("Testing to see if resources can be modified");
-
-
-
-			var newFileName = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location)+".new.exe";
-
-			WriteBlankExecutable(newFileName);
-
-			Console.WriteLine("Go try the new file");
 		}
 
 		static void RunShellCommand(string command)
@@ -127,7 +117,7 @@ arguments:
 			var assm = Assembly.GetExecutingAssembly();
 			var def = AssemblyDefinition.ReadAssembly(assm.Location);
 			def.MainModule.Resources.Clear();
-			def.Write(newFileName);
+			def.Write(Path.GetFullPath(newFileName));
 		}
 
 
@@ -154,7 +144,8 @@ arguments:
 
 		static void NeedArgs(string[] args, int i)
 		{
-			if (args.Length < i) ShowInfo();
+			if (args.Length >= i) return;
+			ShowInfo();
 			Environment.Exit(1);
 		}
 	}
